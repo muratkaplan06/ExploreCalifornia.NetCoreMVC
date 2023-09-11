@@ -1,9 +1,21 @@
+using ExploreCalifornia.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
+
+builder.Services.AddDbContext<BlogDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("NpgSqlConnection") ?? throw new
+            InvalidOperationException("ConnectionString 'NpgSqlConnection' not found."),
+        option =>
+        {
+            option.MigrationsAssembly(Assembly.GetAssembly(typeof(BlogDbContext))?.GetName().Name);
+        }));
 
 var app = builder.Build();
 
