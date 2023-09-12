@@ -7,17 +7,19 @@ namespace ExploreCalifornia.Controllers
     
     public class BlogController : Controller
     {
-        private BlogDbContext _db;
+        
+        private BlogDbContext _context;
 
-        public BlogController(BlogDbContext db)
+        public BlogController(BlogDbContext context)
         {
-            _db = db;
+            _context=context;
+            
         }
 
         [Route("")]
         public IActionResult Index()
         {
-            var posts = _db.Posts.OrderByDescending(x => x.Posted).Take(5).ToArray();
+            var posts = _context.Posts.OrderByDescending(x => x.Posted).Take(5).ToArray();
 
             return View(posts);
         }
@@ -26,8 +28,9 @@ namespace ExploreCalifornia.Controllers
         public IActionResult Post(int year,int month,string key)
         {
 
-            var post=_db.Posts.FirstOrDefault(x => x.Key == key);
+            var post=_context.Posts.FirstOrDefault(x => x.Key == key);
             return View(post);
+
             //var post=new Post
             //{
             //    Title = "My blog post",
@@ -60,8 +63,8 @@ namespace ExploreCalifornia.Controllers
             post.Author = "Mehmet";
             post.Posted = DateTime.UtcNow;
 
-            _db.Posts.Add(post);
-            _db.SaveChanges();
+            _context.Posts.Add(post);
+            _context.SaveChanges();
 
             return View();
         }

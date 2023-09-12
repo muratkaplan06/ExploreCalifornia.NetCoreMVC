@@ -16,6 +16,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
         {
             option.MigrationsAssembly(Assembly.GetAssembly(typeof(BlogDbContext))?.GetName().Name);
         }));
+builder.Services.AddTransient<FormattingService>();
 
 var app = builder.Build();
 
@@ -25,6 +26,9 @@ if (!app.Environment.IsDevelopment())//yani "development" dýþýndaysa"staging", v
 {
     app.UseExceptionHandler("/Error");
 }
+
+
+//builder.Services.AddTransient<FormattingService>();
 
 //Özellikle geliþtirme sýrasýnda, uygulamanýzýn hata verdiði durumlarý daha iyi anlamak ve
 //sorunlarý hýzlýca teþhis etmek için bu middleware'i kullanabilirsiniz

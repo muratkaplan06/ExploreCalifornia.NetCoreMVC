@@ -7,7 +7,7 @@ namespace ExploreCalifornia.Models
     {
         public long Id { get; set; }
 
-        public string _key;
+        private string _key;
 
         public string Key
         {

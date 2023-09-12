@@ -10,5 +10,6 @@ namespace ExploreCalifornia.Models
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<MonthlySpecial> MonthlySpecials { get; set; }
     }
 }

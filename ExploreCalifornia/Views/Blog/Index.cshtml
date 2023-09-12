@@ -12,7 +12,9 @@
 <div class="blog-posts">
     @foreach (var post in Model)
     {
-        <article class="blog-post">
+        @await Html.PartialAsync("_Post", post)
+
+        @* <article class="blog-post">
             <h1>
                 @Html.ActionLink(post.Title, "Post", "Blog",
                     new { year = post.Posted.Year, month = post.Posted.Month, key = post.Key }
@@ -24,6 +26,6 @@
             <div class="content">
                 @post.Body
             </div>
-        </article>
+        </article> *@
     }
 </div>
