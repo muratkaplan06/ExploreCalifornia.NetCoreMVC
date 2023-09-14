@@ -1,6 +1,7 @@
 using ExploreCalifornia.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,16 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
         {
             option.MigrationsAssembly(Assembly.GetAssembly(typeof(BlogDbContext))?.GetName().Name);
         }));
+
+builder.Services.AddDbContext<IdentityDataContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityNpgSqlConnection"));
+});
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<IdentityDataContext>();
+    
+
 builder.Services.AddTransient<FormattingService>();
 
 var app = builder.Build();
@@ -58,7 +69,10 @@ app.UseRouting();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapRazorPages();
 app.UseMvc(routes=>

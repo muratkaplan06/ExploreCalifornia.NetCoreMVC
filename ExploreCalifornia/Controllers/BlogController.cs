@@ -1,10 +1,10 @@
 ﻿using ExploreCalifornia.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExploreCalifornia.Controllers
 {
     [Route("blog")]
-    
     public class BlogController : Controller
     {
         
@@ -17,9 +17,28 @@ namespace ExploreCalifornia.Controllers
         }
 
         [Route("")]
-        public IActionResult Index()
+        public IActionResult Index(int page=0)
         {
-            var posts = _context.Posts.OrderByDescending(x => x.Posted).Take(5).ToArray();
+            var pageSize = 2;
+            var totalPosts = _context.Posts.Count();
+            var totalPages = totalPosts / pageSize;
+            var previousPage = page - 1;
+            var nextPage = page + 1;
+
+            ViewBag.PreviousPage = previousPage;
+            ViewBag.HasPreviousPage = previousPage >= 0;
+            ViewBag.NextPage = nextPage;
+            ViewBag.HasNextPage = nextPage < totalPages;
+
+            var posts =
+                _context.Posts
+                    .OrderByDescending(x => x.Posted)
+                    .Skip(pageSize * page)
+                    .Take(pageSize)
+                    .ToArray();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return PartialView(posts);
 
             return View(posts);
         }
@@ -46,21 +65,20 @@ namespace ExploreCalifornia.Controllers
             //ViewBag.Body = "This is a great blog post, don't you think?";
            
         }
-
+        [Authorize]
         [HttpGet,Route("create")]
         public IActionResult Create()
         {
             return View();
         }
-
+        [Authorize]
         [HttpPost, Route("create")]
         public IActionResult Create(Post post)
         {
             //if (!ModelState.IsValid)
             //    return View();
 
-            //post.Author = User.Identity.Name;
-            post.Author = "Mehmet";
+            post.Author = User.Identity.Name;
             post.Posted = DateTime.UtcNow;
 
             _context.Posts.Add(post);
